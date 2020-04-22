@@ -18,9 +18,11 @@ The following steps outline how the ext-mod is meant to be used:
 6. Hide the "Remove File" and "Send it" from Target Upload Field
 
 ## Future Enhancements:
-1. Provide control over which link are hidden in the upload fields
-2. Provide control over the state in which the target field instrument is set
+1. Provide control over which links are hidden in the upload fields
+2. Provide control over the state in which the target field instrument is set after uploading the pdf file automatically
 3. Add functionality to allow more than one target field
+4. Add functionality to toggle REDCap Logo off the pdf file straight from the Ext-Mod
+5. Prevent overwriting the pdf file if the triggering condition is met a subsequent time
 
 ## Comments, questions, or concerns, please contact:
 Ed Morales at EMORALES@BWH.HARVARD.EDU

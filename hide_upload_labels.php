@@ -1,5 +1,7 @@
 <?php
-namespace Partners\EMTemplate;
+//© 2020 Partners HealthCare System, Inc. / Mass General Brigham
+//All Rights Reserved.
+namespace Partners\autoPdfUpload;
 global $Proj;
 
 $hide_css = $this->getProjectSetting('hide_css');

@@ -1,4 +1,6 @@
 <?php
+//© 2020 Partners HealthCare System, Inc. / Mass General Brigham
+//All Rights Reserved.
 namespace Partners\autoPdfUpload;
 use \REDCap as REDCap;
 include_once dirname(__FILE__)."/classes/common.php";

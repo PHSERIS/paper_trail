@@ -1,5 +1,7 @@
 <?php
-namespace Partners\EMTemplate;
+//© 2020 Partners HealthCare System, Inc. / Mass General Brigham
+//All Rights Reserved.
+namespace Partners\autoPdfUpload;
 use \REDCap as REDCap;
 use \Files as Files;
 use ExternalModules\ExternalModules as EM;
@@ -17,6 +19,7 @@ $file_prefix = $this->getProjectSetting('file_prefix');
 
 $pk = $Proj->table_pk;
 $target_form = $Proj->metadata[$target_field]['form_name'];
+//$Proj->project['pdf_show_logo_url'] = '0'; // Auto-remove the REDCap Logo from the pdf-file
 
 $instrument_list = [];
 foreach ($not_null_fields as $k => $v){
