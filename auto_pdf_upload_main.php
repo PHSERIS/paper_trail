@@ -59,7 +59,8 @@ function generate_and_upload_pdf($project_id, $record,$pdf_this_form,$target_fie
         $compact_display = false, $appendToHeader = "", $appendToFooter = "", $hideSurveyTimestamp = false);
     // full path and filename of the file to upload
     $filename = $file_prefix . "_" . $project_id . "_" . $record . "_" . date("_Y-m-d_Hi") . ".pdf";
-    $filename_with_path = "/tmp/" . $filename;
+//    $filename_with_path = "/tmp/" . $filename;
+    $filename_with_path = APP_PATH_TEMP . $filename; // Consider creating a ternary operation and allow user to determine their temp folder location
 
     // Save the PDF to a local web server directory
     $pdf_file = file_put_contents($filename_with_path, $pdf_content);
