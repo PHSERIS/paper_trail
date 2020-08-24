@@ -16,14 +16,15 @@ $paper_trail_type = $this->getProjectSetting('paper_trail_type');
 
 if ($paper_trail_type == 'ppt_1') {
     $main_ulr = __DIR__ . '/use_cases/single_uc.php';
-//    logThis2($main_ulr,$project_id);
     if (!@include($main_ulr)) ;
 }
 
 if ($paper_trail_type == 'ppt_2') {
-    $main_ulr = __DIR__ . '/use_cases/multi_uc.php';
-//    logThis2($main_ulr,$project_id);
-    if (!@include($main_ulr)) ;
+  /*
+   * NOT IMPLEMENTED as of version 1.3.2
+   */
+    //$main_ulr = __DIR__ . '/use_cases/multi_uc.php';
+    //if (!@include($main_ulr)) ;
 }
 
 ?>

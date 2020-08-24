@@ -52,14 +52,10 @@
 		},
 		{
 			"key": "description_cron",
-			"name": "<b>Server-side processing of large PDF files:</b><ul><li>(Recommended) Set this to \"Enabled\" if your project utilizes INLINEPDF and/or attached images as part of the forms that need to be combined into a PDF document. The file will be generated within 1 or 2 minutes of the record being saved and the defined conditions (below) being met.</li><li>Set to \"Disabled\" if you wish to generate the PDF file in realtime. NOTE: This may impact user experience as it may introduce a delay when the record is saved.</li></ul>",
+			"name": "<b>Server-side processing of large PDF files:</b><ul><li>Enable this option for generating large PDF file on the server-side using a CRON job.</li><li>Good alternative for generating PDF files that affect the user experience by taking a long time to be generated on the browser, on-the-fly.</li><li>Its expected behavior is the same; the resulting PDF file will be uploaded to the target field, but delayed 5-minutes until the next CRON job starts.</li></ul>",
 			"required": false,
 			"allow-project-overrides": false,
-			"type": "descriptive",
-			"branchingLogic": {
-				"field": "paper_trail_type",
-				"value": "ppt_1"
-			}
+			"type": "descriptive"
 		},
 		{
 			"key": "enable_cron",
@@ -71,11 +67,7 @@
 			"choices": [
 				{ "value": "1", "name": "Enable" },
 				{ "value": "0", "name": "Disable" }
-			],
-			"branchingLogic": {
-				"field": "paper_trail_type",
-				"value": "ppt_1"
-			}
+			]
 		},
 		{
 			"key": "description",
@@ -138,13 +130,6 @@
 				"field": "paper_trail_type",
 				"value": "ppt_1"
 			}
-		},
-		{
-			"key": "enable_survey_archive",
-			"name": "<b>Store a copy of the generated document in the PDF Survey Archival section (see File Repository)</b></br>*Requires that surveys be used/configured in this project*",
-			"allow-project-overrides": false,
-			"type": "checkbox",
-			"repeatable":false
 		},
 		{
 			"key": "upload_type",
@@ -213,7 +198,7 @@
 		},
 		{
 			"key": "multi_desc",
-			"name": "<b>The Multiple Use-Case feature is under active development at the moment and not available! Please select Single Use-Case!</b>",
+			"name": "<b>Using the following drop down menus, specify</b><ol><li>name of the instrument(s) expected to be saved in pdf format</li><li>upload (target) field receiving the pdf file from step #1</li><li>prefix of pdf file name from step #2; it will be concatenated to system constants <i>i.e. prefix_project_id_record_id_date_time.pdf</i></li><li>type of upload: <ul><li>Automatic file upload after all specified fields have been answered</li><li>Controlled by a single Yes/No field triggering the upload</li><li>Disable configuration for resetting selection in case troubleshooting is needed</li></ul></li><li>Hide the \"Remove File\" and  \"Send it\" from Target Upload Field</li></ol>",
 			"required": false,
 			"allow-project-overrides": false,
 			"type": "descriptive",
@@ -221,6 +206,122 @@
 				"field": "paper_trail_type",
 				"value": "ppt_2"
 			}
+		},
+		{
+			"key": "instance_use_case",
+			"name": "Specify use-case details",
+			"required": true,
+			"type": "sub_settings",
+			"repeatable":true,
+			"branchingLogic": {
+				"field": "paper_trail_type",
+				"value": "ppt_2"
+			},
+			"sub_settings":[
+				{
+					"key": "instance_pdf_form",
+					"name": "<b>Specify form</b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"type": "form-list",
+					"repeatable":true
+				},
+				{
+					"key": "instance_target_field",
+					"name": "<b>Select target upload field</b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"type": "field-list",
+					"repeatable":false
+				},
+				{
+					"key": "instance_complete_stat",
+					"name": "<b>Target form status</b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"default": "0",
+					"type": "radio",
+					"choices": [
+						{ "value": "0", "name": "Incomplete" },
+						{ "value": "1", "name": "Unverified" },
+						{ "value": "2", "name": "Complete" }
+
+					]
+				},
+				{
+					"key": "instance_file_prefix",
+					"name": "<b>File prefix to be used </b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"type": "text"
+				},
+				{
+					"key": "instance_upload_type",
+					"name": "<b>Type of upload</b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"default": "99",
+					"type": "radio",
+					"choices": [
+						{ "value": "C1", "name": "Automatic - dependent on one or more Not-Null fields" },
+						{ "value": "C2", "name": "Controlled - dependent on only one Yes/No field" },
+						{ "value": "99", "name": "Disable - reset selection" }
+
+					]
+				},
+				{
+					"key": "instance_not_null_fields",
+					"name": "Select field",
+					"required": true,
+					"branchingLogic": {
+						"conditions": [
+							{
+								"field": "instance_upload_type",
+								"value": "C1"
+							}
+						]
+					},
+					"allow-project-overrides": false,
+					"type": "field-list",
+					"repeatable": true
+				},
+				{
+					"key": "instance_trigger_field",
+					"name": "<b>Select trigger field</b><br> must be Yes/No field",
+					"required": true,
+					"branchingLogic": {
+						"conditions": [
+							{
+								"field": "instance_upload_type",
+								"value": "C2"
+							}
+						]
+					},
+					"allow-project-overrides": false,
+					"type": "field-list"
+				},
+				{
+					"key": "instance_hide_css",
+					"name": "<b>Hide all link labels <br>from target upload field</b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"type": "radio",
+					"choices": [
+						{ "value": "Y", "name": "Yes" },
+						{ "value": "N", "name": "No" }
+
+					]
+				}
+			]
+		}
+	],
+	"crons": [
+		{
+			"cron_name": "server_side_pdf_gen_4_paper_trail",
+			"cron_description": "Generate lengthy PDF server side for eSignature surveys and archive it in the Project's PDF Survey Archive ",
+			"method": "server_side_pdf_generator_paper_trail",
+			"cron_frequency": "300",
+			"cron_max_run_time": "300"
 		}
 	]
 }

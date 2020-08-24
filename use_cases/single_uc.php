@@ -2,108 +2,116 @@
 //© 2020 Partners HealthCare System, Inc. / Mass General Brigham
 //All Rights Reserved.
 namespace Partners\autoPdfUpload;
+
+use ExternalModules\ExternalModules as EM;
 use \REDCap as REDCap;
 use \Files as Files;
-use ExternalModules\ExternalModules as EM;
-global $Proj;
+use \Survey as Survey;
+use \Logging as Logging;
+require_once 'paper_trail_common.php';
 
+global $Proj;
 
 //logThis2('Single use case reached',$project_id);
 
-$pdf_this_form = $this->getProjectSetting('pdf_form');
+/**
+ * Get the settings of the EM
+ */
+$pdf_these_forms = array(); //$this->getProjectSetting('pdf_form');
 $target_field = $this->getProjectSetting('target_field');
+$forms_in_project = array_keys($Proj->forms);
+foreach ( $this->getProjectSetting('pdf_form') as $f_c => $f ) {
+  if ( in_array($f, $forms_in_project) ) {
+    $pdf_these_forms[$f] = $f; // form is valid in this project - put it in an associative array so we de-duplicate
+  }
+}
+
+if ( count($pdf_these_forms)<=0 ) return; // nothing to do
+
+/**
+ * Check to see if the instrument that is triggering this is on the PDF form. If it's not - return.
+ * We only want to have this work from one of the forms that are being PDFed
+ */
+if ( !in_array($instrument, $pdf_these_forms) ) {
+  return; // Don't do anything
+}
+
+// service URL
+$url = $this->getUrl('auto_pdf_service.php')."&NOAUTH&pid=". $project_id;
+
+/**
+ * C1 -> Automatic -
+ * C2 -> Controlled - Depends on a Yes/No field
+ * 99 -> Disabled
+ */
 $upload_type = $this->getProjectSetting('upload_type');
-
-$not_null_fields = $this->getProjectSetting('not_null_fields');
-
-$trigger_field = $this->getProjectSetting('trigger_field');
 $file_prefix = $this->getProjectSetting('file_prefix');
+$server_side_processing = $this->getProjectSetting('enable_cron');
+$form_status = $this->getProjectSetting('complete_stat');
+$allowed_form_status = array ("0","1","2");
+if ( !in_array($form_status, $allowed_form_status) )
+  $form_status = "0";
 
 $pk = $Proj->table_pk;
 $target_form = $Proj->metadata[$target_field]['form_name'];
-//$Proj->project['pdf_show_logo_url'] = '0'; // Auto-remove the REDCap Logo from the pdf-file
 
-$instrument_list = [];
-foreach ($not_null_fields as $k => $v){
-    $inx = $Proj->metadata[$v]['form_name'];
-    $instrument_list[] = $inx;
-}
-$instrument_list = array_unique($instrument_list);
-
-if ($upload_type == "C1" and strlen(array_search($instrument, $instrument_list)) >= 1) {
-
-    $nnf_content = REDCap::getData('array', array($record), $not_null_fields);
-    $num_of_null_fields = sizeof(array_filter($nnf_content[$record][$event_id], function($x) { return empty($x); }));
-
-    if($num_of_null_fields == 0) {
-        generate_and_upload_pdf($project_id, $record, $pdf_this_form, $target_field, $event_id, $target_form, $pk, $file_prefix);
+$enable_survey_archive = $this->getProjectSetting('enable_survey_archive');
+$survey_id = -1;
+if ( $enable_survey_archive ) {
+  $surveys = $Proj->surveys;
+  foreach ( $surveys as $sid => $s_details ) {
+    if ( $instrument == $s_details['form_name'] ) {
+      $survey_id = $sid;
     }
+  }
+
+  // IF the survey ID was not found, then use the first survey ID if we have surveys at all
+  if ( $survey_id < 0 && count($surveys)>0) {
+    $survey_id = $Proj->firstFormSurveyId;
+  }
 }
 
-// Get instrument hosting the trigger field
-$trigger_instrument = $Proj->metadata[$trigger_field]['form_name'];
-
-if ($upload_type == "C2" and $instrument == $trigger_instrument) {
-
-    $trigger_field_content = REDCap::getData('array', array($record), $trigger_field);
-    $num_of_null_fields = sizeof(array_filter($trigger_field_content[$record][$event_id], function($x) { return empty($x); }));
-
-    if($num_of_null_fields == 0) {
-        generate_and_upload_pdf($project_id, $record, $pdf_this_form, $target_field, $event_id, $target_form, $pk, $file_prefix);
+switch ($upload_type) {
+  case 'C1':
+    $not_null_fields = $this->getProjectSetting('not_null_fields');
+    // Check to see if the PDF generating condition is true
+    if ( PAGE == 'surveys/index.php' ){
+      // Check to see if the form is complete
+      $survey_status = Survey::getResponseStatus ($project_id, $record, $event_id);
+      if ( isset($survey_status) && count($survey_status)>0 ) {
+        if ( $survey_status[$record][$event_id][$instrument][$repeat_instance] != 2 ){
+          return; // we only trigger on Complete when it's coming from a survey!!!!
+        }
+      }
     }
-}
 
-function generate_and_upload_pdf($project_id, $record,$pdf_this_form,$target_field, $event_id, $target_form, $pk, $file_prefix)
-{
-    // Get the content of the PDF for one record for one event for one instrument
-
-    $pdf_content = REDCap::getPDF($record, $pdf_this_form, $event_id, $all_records = false, $repeat_instance = 1,
-        $compact_display = false, $appendToHeader = "", $appendToFooter = "", $hideSurveyTimestamp = false);
-    // full path and filename of the file to upload
-    $filename = $file_prefix . "_" . $project_id . "_" . $record . "_" . date("_Y-m-d_Hi") . ".pdf";
-//    $filename_with_path = "/tmp/" . $filename;
-    $filename_with_path = APP_PATH_TEMP . $filename; // Consider creating a ternary operation and allow user to determine their temp folder location
-
-    // Save the PDF to a local web server directory
-    $pdf_file = file_put_contents($filename_with_path, $pdf_content);
-
-    $pdf_file_details = array(
-        'name' => $filename,
-        'size' => filesize($filename_with_path),
-        'tmp_name' => $filename_with_path,
-    );
-
-    // Now we have to upload the file to the desired instrument
-    $docId = Files::uploadFile($pdf_file_details);
-
-    if ($docId != 0) {
-        $data_to_save = array(
-            $record => array(
-                $target_form => array(
-                    $pk => $record,
-                    $target_field => $docId,
-                    $target_form . "_complete" => 2)
-            ));
-
-        // Import the data with REDCap::saveData
-        $response = REDCap::saveData(
-            $project_id,
-            'array', // The format of the data
-            $data_to_save, // The Data
-            'overwrite', // Overwrite behavior
-            'YMD', // date format
-            'flat', // type of the data
-            null, // Group ID
-            null, // data logging
-            true, // perform auto calculations
-            true, // commit data
-            false, // log as auto calc
-            true, // skip calc fields
-            array(), // change reasons
-            false, // return data comparison array
-            false, // skip file upload fields - this is what we are actually updating
-            false // remove locked fields
-        );
+    $ok_to_generate = check_triggering_condition( $Proj, $record, $event_id, $repeat_instance, $not_null_fields, $upload_type );
+    if ( $ok_to_generate ) {
+      trigger_pdf_generation($server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive);
     }
+
+    break;
+
+  case 'C2':
+    $trigger_field = $this->getProjectSetting('trigger_field');
+    // Check to see if the PDF generating condition is true
+    if ( PAGE == 'surveys/index.php' ){
+      // Check to see if the form is complete
+      $survey_status = Survey::getResponseStatus ($project_id, $record, $event_id);
+      if ( isset($survey_status) && count($survey_status)>0 ) {
+        if ( $survey_status[$record][$event_id][$instrument][$repeat_instance] != 2 ){
+          return; // we only trigger on Complete when it's coming from a survey!!!
+        }
+      }
+    }
+    // Check to see if the PDF generating condition is true
+    $ok_to_generate = check_triggering_condition( $Proj, $record, $event_id, $repeat_instance, $trigger_field, $upload_type );
+    if ( $ok_to_generate ) {
+      trigger_pdf_generation($server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive);
+    }
+    break;
+
+  default: break; // Captures case 99 - Disabled
 }
+
 ?>

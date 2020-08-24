@@ -140,13 +140,6 @@
 			}
 		},
 		{
-			"key": "enable_survey_archive",
-			"name": "<b>Store a copy of the generated document in the PDF Survey Archival section (see File Repository)</b></br>*Requires that surveys be used/configured in this project*",
-			"allow-project-overrides": false,
-			"type": "checkbox",
-			"repeatable":false
-		},
-		{
 			"key": "upload_type",
 			"name": "<b>Type of upload</b>",
 			"required": true,
