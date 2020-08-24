@@ -150,7 +150,7 @@ function check_triggering_condition ( $Proj, $record, $event_id, $repeat_instanc
  * @param $pk
  * @param $file_prefix
  */
-function trigger_pdf_generation ( $server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive ) {
+function trigger_pdf_generation ( $server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive,$k_index ) {
   if ( $server_side_processing == 1 || $server_side_processing == '1' ) {
     // Send this to the service
     // Form the params
@@ -159,6 +159,7 @@ function trigger_pdf_generation ( $server_side_processing, $project_id, $record,
       'ss_event_id' => $event_id,
       'ss_instance' => $repeat_instance,
       'ss_survey_id' => $survey_id,
+        'ss_multi_k' => $k_index // I added this!
     );
 
     // POST to the service

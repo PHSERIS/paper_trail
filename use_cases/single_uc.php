@@ -71,6 +71,8 @@ if ( $enable_survey_archive ) {
   }
 }
 
+$k_index = ''; // No k-index needed for single use-case
+
 switch ($upload_type) {
   case 'C1':
     $not_null_fields = $this->getProjectSetting('not_null_fields');
@@ -87,7 +89,7 @@ switch ($upload_type) {
 
     $ok_to_generate = check_triggering_condition( $Proj, $record, $event_id, $repeat_instance, $not_null_fields, $upload_type );
     if ( $ok_to_generate ) {
-      trigger_pdf_generation($server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive);
+      trigger_pdf_generation($server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive,$k_index);
     }
 
     break;
@@ -107,7 +109,7 @@ switch ($upload_type) {
     // Check to see if the PDF generating condition is true
     $ok_to_generate = check_triggering_condition( $Proj, $record, $event_id, $repeat_instance, $trigger_field, $upload_type );
     if ( $ok_to_generate ) {
-      trigger_pdf_generation($server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive);
+      trigger_pdf_generation($server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive,$k_index);
     }
     break;
 

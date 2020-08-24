@@ -52,11 +52,11 @@ global $Proj;
  * BUT we can get a lot of them out of the module!
  */
 
-// If project is not-server-side - return
-$server_side_processing = $module->getProjectSetting('enable_cron');
-if ( $server_side_processing != 1 && $server_side_processing != '1' ) {
-  return exit('[]'); // Server-side processing is not enabled on this module - nothing to do
-}
+//// If project is not-server-side - return
+//$server_side_processing = $module->getProjectSetting('enable_cron');
+//if ( $server_side_processing != 1 && $server_side_processing != '1' ) {
+//  return exit('[]'); // Server-side processing is not enabled on this module - nothing to do
+//}
 
 // Get the Event ID
 if ( !isset($_POST['ss_event_id']) || !is_numeric($_POST['ss_event_id']) ) exit('[2]');
@@ -77,6 +77,12 @@ $paper_trail_type = $module->getProjectSetting('paper_trail_type');
 
 if ($paper_trail_type == 'ppt_1') {
   // SINGLE Use Case Scenario
+    // If project is not-server-side - return
+    $server_side_processing = $module->getProjectSetting('enable_cron');
+    if ( $server_side_processing != 1 && $server_side_processing != '1' ) {
+        return exit('[]'); // Server-side processing is not enabled on this module - nothing to do
+    }
+
   $pdf_these_forms = array(); //$module->getProjectSetting('pdf_form');
   $target_field = $module->getProjectSetting('target_field');
   $forms_in_project = array_keys($Proj->forms);
@@ -109,7 +115,44 @@ if ($paper_trail_type == 'ppt_1') {
 }
 
 if ($paper_trail_type == 'ppt_2') {
-  // MULTI Use Case Scenario
+    // Multi Use Case Scenario
+    // Multi k-index
+    if ( !isset($_POST['ss_multi_k']) || !is_numeric($_POST['ss_multi_k']) ) exit('[6]');
+    $k = trim(strip_tags(html_entity_decode($_POST['ss_multi_k'], ENT_QUOTES)));
 
+    $pdf_these_forms = array(); //$module->getProjectSetting('pdf_form');
+//    $target_field = $module->getProjectSetting('target_field');
+    $target_field = $module->getProjectSetting('multi_target_field')[$k];
+    $forms_in_project = array_keys($Proj->forms);
+//    foreach ( $module->getProjectSetting('pdf_form') as $f_c => $f ) {
+    foreach ( $module->getProjectSetting('multi_pdf_form')[$k] as $f_c => $f ) {
+        if ( in_array($f, $forms_in_project) ) {
+            $pdf_these_forms[$f] = $f; // form is valid in this project - put it in an associative array so we de-duplicate
+        }
+    }
+//    $form_status = $module->getProjectSetting('complete_stat');
+    $form_status = $module->getProjectSetting('multi_complete_stat')[$k];
+    $allowed_form_status = array ("0","1","2");
+    if ( !in_array($form_status, $allowed_form_status) )
+        $form_status = "0";
+
+    if ( count($pdf_these_forms) <=0 )
+        return exit('[]'); // nothing to do
+    if ( strlen($target_field) <=0 )
+        return exit('[]'); // nothing to do
+    if ( !isset($Proj->metadata[$target_field]) )
+        return exit('[]'); // nothing to do
+
+//    $file_prefix = $module->getProjectSetting('file_prefix');
+    $file_prefix = $module->getProjectSetting('multi_file_prefix')[$k];
+    $target_form = $Proj->metadata[$target_field]['form_name'];
+
+//    $pdf_archival = $module->getProjectSetting('enable_survey_archive');
+    $pdf_archival = $module->getProjectSetting('multi_enable_survey_archive')[$k];
+
+    // We should have everything we need at this point
+    generate_and_upload_pdf ( $Proj->project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $form_status, "SYSTEM", $pdf_archival, $survey_id );
+
+    return; // We're done
 }
 

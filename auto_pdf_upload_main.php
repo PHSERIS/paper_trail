@@ -20,11 +20,22 @@ if ($paper_trail_type == 'ppt_1') {
 }
 
 if ($paper_trail_type == 'ppt_2') {
-  /*
-   * NOT IMPLEMENTED as of version 1.3.2
-   */
-    //$main_ulr = __DIR__ . '/use_cases/multi_uc.php';
-    //if (!@include($main_ulr)) ;
+    foreach ($this->getProjectSetting('multi_use_case_name') as $k =>$v){
+        // Get settings per each use-case
+        $multi_use_case_name = $this->getProjectSetting('multi_use_case_name')[$k];
+        $multi_enable_cron = $this->getProjectSetting('multi_enable_cron')[$k];                         // Done
+        $multi_pdf_form = $this->getProjectSetting('multi_pdf_form')[$k];                               // Done
+        $multi_target_field = $this->getProjectSetting('multi_target_field')[$k];                       // Done
+        $multi_complete_stat = $this->getProjectSetting('multi_complete_stat')[$k];                     // Done
+        $multi_file_prefix = $this->getProjectSetting('multi_file_prefix')[$k];                         // Done
+        $multi_enable_survey_archive = $this->getProjectSetting('multi_enable_survey_archive')[$k];     // Done
+        $multi_upload_type = $this->getProjectSetting('multi_upload_type')[$k];                         // Done
+        $multi_not_null_fields = $this->getProjectSetting('multi_not_null_fields')[$k];                 // Done
+        $multi_trigger_field = $this->getProjectSetting('multi_trigger_field')[$k];                     // Done
+        $multi_hide_css = $this->getProjectSetting('multi_hide_css')[$k];
+        $main_ulr = __DIR__ . '/use_cases/multi_uc_v01.php';
+        if (!@include($main_ulr)) ;
+    }
 }
 
 ?>
