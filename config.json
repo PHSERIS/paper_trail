@@ -3,6 +3,8 @@
 
 	"namespace": "Partners\\autoPdfUpload",
 
+	"framework-version": 2,
+
 	"authors": [
 		{
 			"name": "Ed Morales",
@@ -27,32 +29,143 @@
 	
 	"project-settings": [
 		{
-			"key": "description",
-			"name": "<b>Using the following drop down menus, specify</b><ol><li>name of the instrument expected to be saved in pdf format</li><li>upload (target) field receiving the pdf file from step #1</li><li>prefix of pdf file name from step #2; it will be concatenated to system constants <i>i.e. prefix_projec_id_record_id_date_time.pdf</i></li><li>type of upload: <ul><li>Automatic file upload after all specified fields have been answered</li><li>Controlled by a single Yes/No field triggering the upload</li><li>Disable configuration for resetting selection in case troubleshooting is needed</li></ul></li><li>Hide the \"Remove File\" and  \"Send it\" from Target Upload Field</li></ol>",
+			"key": "main_desc",
+			"name": "<b>Select the type of paper trail needed for your specific use case:</b><ol><li><b>Single instrument use-case:</b> one instrument must be pdf'd, based on one or several fields being completed, and uploaded to only one upload field,  </li><li><b>Multiple instrument use-case:</b> one or several instruments must be pdf'd separetely into their respective upload fields and conditions; <i>with <b>optional</b> advanced PDF processing options</i></li></ol>",
 			"required": false,
 			"allow-project-overrides": false,
 			"type": "descriptive"
+		},
+		{
+			"key": "paper_trail_type",
+			"name": "<b>Select use-case</b>",
+			"required": true,
+			"allow-project-overrides": false,
+			"default": "00",
+			"type": "radio",
+			"choices": [
+				{ "value": "ppt_1", "name": "Single Use-Case" },
+				{ "value": "ppt_2", "name": "Multiple Use-Cases" }
+			]
+		},
+		{
+			"key": "advanced_pdf_processing",
+			"name": "<b>Advanced PDF processing</b>",
+			"allow-project-overrides": false,
+			"type": "checkbox",
+			"repeatable":false,
+			"branchingLogic": {
+				"field": "paper_trail_type",
+				"value": "ppt_2"
+			}
+		},
+		{
+			"key": "custom_pdf_header",
+			"name": "<b>Specify field(s) to be pipped into PDF file's header:</b> <i>(no more than 4 fields are recommended)</i>",
+			"required": false,
+			"allow-project-overrides": false,
+			"type": "descriptive",
+			"branchingLogic": {
+				"field": "advanced_pdf_processing",
+				"value": true
+			}
+		},
+		{
+			"key": "header_fields_settings",
+			"name": "<b>Select field</b>",
+			"required": false,
+			"type": "sub_settings",
+			"repeatable":true,
+			"branchingLogic": {
+				"field": "advanced_pdf_processing",
+				"value": true
+			},
+			"sub_settings":[
+				{
+					"key": "header_fields",
+					"name": "<b>Select field</b>",
+					"required": false,
+					"type": "field-list",
+					"repeatable": false
+				},
+				{
+					"key": "pdf_header_label",
+					"name": "<b>(optional)</b> Prepend field label",
+					"required": false,
+					"allow-project-overrides": false,
+					"type": "text",
+					"repeatable":false
+				}
+			]
+		},
+		{
+			"key": "description_cron",
+			"name": "<b>Server-side processing of large PDF files:</b><ul><li>Enable this option for generating large PDF file on the server-side using a CRON job.</li><li>Good alternative for generating PDF files that affect the user experience by taking a long time to be generated on the browser, on-the-fly.</li><li>Its expected behavior is the same; the resulting PDF file will be uploaded to the target field, but delayed 5-minutes until the next CRON job starts.</li></ul>",
+			"required": false,
+			"allow-project-overrides": false,
+			"type": "descriptive",
+			"branchingLogic": {
+				"field": "advanced_pdf_processing",
+				"value": true
+			}
+		},
+		{
+			"key": "enable_cron",
+			"name": "<b>Server-Side PDF processing</b>",
+			"required": true,
+			"type": "radio",
+			"repeatable":false,
+			"choices": [
+				{ "value": "1", "name": "Enable" },
+				{ "value": "0", "name": "Disable" }
+			],
+			"branchingLogic": {
+				"field": "advanced_pdf_processing",
+				"value": true
+			}
+		},
+		{
+			"key": "description",
+			"name": "<b>Using the following drop down menus, specify</b><ol><li>name of the instrument expected to be saved in pdf format</li><li>upload (target) field receiving the pdf file from step #1</li><li>prefix of pdf file name from step #2; it will be concatenated to system constants <i>i.e. prefix_project_id_record_id_date_time.pdf</i></li><li>type of upload: <ul><li>Automatic file upload after all specified fields have been answered</li><li>Controlled by a single Yes/No field triggering the upload</li><li>Disable configuration for resetting selection in case troubleshooting is needed</li></ul></li><li>Hide the \"Remove File\" and  \"Send it\" from Target Upload Field</li></ol>",
+			"required": false,
+			"allow-project-overrides": false,
+			"type": "descriptive",
+			"branchingLogic": {
+				"field": "paper_trail_type",
+				"value": "ppt_1"
+			}
 		},
 		{
 			"key": "pdf_form",
 			"name": "<b>Specify form</b>",
 			"required": true,
 			"allow-project-overrides": false,
-			"type": "form-list"
+			"type": "form-list",
+			"branchingLogic": {
+				"field": "paper_trail_type",
+				"value": "ppt_1"
+			}
 		},
 		{
 			"key": "target_field",
 			"name": "<b>Select target upload field</b>",
 			"required": true,
 			"allow-project-overrides": false,
-			"type": "field-list"
+			"type": "field-list",
+			"branchingLogic": {
+				"field": "paper_trail_type",
+				"value": "ppt_1"
+			}
 		},
 		{
 			"key": "file_prefix",
 			"name": "<b>File prefix to be used </b>",
 			"required": true,
 			"allow-project-overrides": false,
-			"type": "text"
+			"type": "text",
+			"branchingLogic": {
+				"field": "paper_trail_type",
+				"value": "ppt_1"
+			}
 		},
 		{
 			"key": "upload_type",
@@ -64,17 +177,29 @@
 			"choices": [
 				{ "value": "C1", "name": "Automatic - dependent on one or more Not-Null fields" },
 				{ "value": "C2", "name": "Controlled - dependent on only one Yes/No field" },
-				{ "value": "C3", "name": "Disable - reset selection" }
+				{ "value": "99", "name": "Disable - reset selection" }
 
-			]
+			],
+			"branchingLogic": {
+				"field": "paper_trail_type",
+				"value": "ppt_1"
+			}
 		},
 		{
 			"key": "not_null_fields",
 			"name": "Select field",
 			"required": true,
 			"branchingLogic": {
-				"field": "upload_type",
-				"value": "C1"
+				"conditions": [
+					{
+						"field": "upload_type",
+						"value": "C1"
+					},
+					{
+						"field": "paper_trail_type",
+						"value": "ppt_1"
+					}
+				]
 			},
 			"allow-project-overrides": false,
 			"type": "field-list",
@@ -95,17 +220,8 @@
 			"key": "hide_css",
 			"name": "<b>Hide all link labels <br>from target upload field</b>",
 			"branchingLogic": {
-				"type": "or",
-				"conditions": [
-					{
-						"field": "upload_type",
-						"value": "C1"
-					},
-					{
-						"field": "upload_type",
-						"value": "C2"
-					}
-				]
+				"field": "paper_trail_type",
+				"value": "ppt_1"
 			},
 			"required": true,
 			"allow-project-overrides": false,
@@ -115,6 +231,128 @@
 				{ "value": "N", "name": "No" }
 
 			]
+		},
+		{
+			"key": "multi_desc",
+			"name": "<b>Using the following drop down menus, specify</b><ol><li>name of the instrument(s) expected to be saved in pdf format</li><li>upload (target) field receiving the pdf file from step #1</li><li>prefix of pdf file name from step #2; it will be concatenated to system constants <i>i.e. prefix_project_id_record_id_date_time.pdf</i></li><li>type of upload: <ul><li>Automatic file upload after all specified fields have been answered</li><li>Controlled by a single Yes/No field triggering the upload</li><li>Disable configuration for resetting selection in case troubleshooting is needed</li></ul></li><li>Hide the \"Remove File\" and  \"Send it\" from Target Upload Field</li></ol>",
+			"required": false,
+			"allow-project-overrides": false,
+			"type": "descriptive",
+			"branchingLogic": {
+				"field": "paper_trail_type",
+				"value": "ppt_2"
+			}
+		},
+		{
+			"key": "instance_use_case",
+			"name": "Specify use-case details",
+			"required": true,
+			"type": "sub_settings",
+			"repeatable":true,
+			"branchingLogic": {
+				"field": "paper_trail_type",
+				"value": "ppt_2"
+			},
+			"sub_settings":[
+				{
+					"key": "instance_pdf_form",
+					"name": "<b>Specify form</b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"type": "form-list",
+					"repeatable":false
+				},
+				{
+					"key": "instance_target_field",
+					"name": "<b>Select target upload field</b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"type": "field-list",
+					"repeatable":false
+				},
+				{
+					"key": "instance_complete_stat",
+					"name": "<b>Target form status</b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"type": "radio",
+					"choices": [
+						{ "value": "0", "name": "Incomplete" },
+						{ "value": "1", "name": "Unverified" },
+						{ "value": "2", "name": "Complete" }
+
+					]
+				},
+				{
+					"key": "instance_file_prefix",
+					"name": "<b>File prefix to be used </b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"type": "text"
+				},
+				{
+					"key": "instance_upload_type",
+					"name": "<b>Type of upload</b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"default": "00",
+					"type": "radio",
+					"choices": [
+						{ "value": "C1", "name": "Automatic - dependent on one or more Not-Null fields" },
+						{ "value": "C2", "name": "Controlled - dependent on only one Yes/No field" },
+						{ "value": "99", "name": "Disable - reset selection" }
+
+					]
+				},
+				{
+					"key": "instance_not_null_fields",
+					"name": "Select field",
+					"required": true,
+					"branchingLogic": {
+						"conditions": [
+							{
+								"field": "instance_upload_type",
+								"value": "C1"
+							}
+						]
+					},
+					"allow-project-overrides": false,
+					"type": "field-list",
+					"repeatable": true
+				},
+				{
+					"key": "instance_trigger_field",
+					"name": "<b>Select trigger field</b><br> must be Yes/No field",
+					"required": true,
+					"branchingLogic": {
+						"field": "instance_upload_type",
+						"value": "C2"
+					},
+					"allow-project-overrides": false,
+					"type": "field-list"
+				},
+				{
+					"key": "instance_hide_css",
+					"name": "<b>Hide all link labels <br>from target upload field</b>",
+					"required": true,
+					"allow-project-overrides": false,
+					"type": "radio",
+					"choices": [
+						{ "value": "Y", "name": "Yes" },
+						{ "value": "N", "name": "No" }
+
+					]
+				}
+			]
+		}
+	],
+	"crons": [
+		{
+			"cron_name": "server_side_pdf_gen_4_paper_trail",
+			"cron_description": "Generate lengthy PDF server side for eSignature surveys and archive it in the Project's PDF Survey Archive ",
+			"method": "server_side_pdf_generator_paper_trail",
+			"cron_frequency": "300",
+			"cron_max_run_time": "300"
 		}
 	]
 }
