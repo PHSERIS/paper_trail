@@ -17,7 +17,8 @@
 		"redcap_save_record",
 		"redcap_survey_page",
 		"redcap_data_entry_form",
-		"redcap_pdf"
+		"redcap_pdf",
+		"redcap_every_page_top"
 	],
 
 	"no-auth-pages":["auto_pdf_service"],
@@ -25,9 +26,23 @@
 	"description": "The goal of this external module (ext-mod) is to streamline the creation of pdf files in REDCap when it needs to be automatically attached to an upload field in the same project. In it simplest form, it can create a pdf-version of a pre-determined REDCap instrument, when specific fields have been completed. You have full control over which fields must be completed before the pdf file is created, as well as selecting the desired upload field. It also contains a feature that allows you to control when to attach the pdf-file to an upload field by answering one single Yes/No field. Additionally, the ext-mod wouldn't be complete without a feature to remove the label \"remove file and send it\" from the upload field, plus server side processing of large pdf files (recommended for instruments with in-line images). Finally, you can use its multi use-case functionality to defined several conditions for generating the pdf file.",
 
 	"links": {
+		"control-center": [
+			{
+				"name": "Paper Trail Migration",
+				"icon": "user",
+				"url": "migration/phase_out_old_settings.php"
+			}
+		]
 	},
 
 	"system-settings": [
+		{
+			"key": "hide_simple_use_case",
+			"name": "Hide simple use-case option",
+			"required": false,
+			"type": "checkbox",
+			"repeatable": false
+		}
 	],
 
 	"project-settings": [

@@ -6,6 +6,7 @@ use \REDCap as REDCap;
 use \Files as Files;
 include_once dirname(__FILE__)."/classes/common.php";
 
+
 class autoPdfUpload extends \ExternalModules\AbstractExternalModule
 {
     function redcap_save_record($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance)
@@ -19,6 +20,33 @@ class autoPdfUpload extends \ExternalModules\AbstractExternalModule
     {
         $css_ulr = __DIR__ . '/ui/hide_upload_labels.php';
         if (!@include($css_ulr)) ;
+    }
+
+    function redcap_every_page_top($project_id)
+    {
+        if (self::getProjectSetting('hide_simple_use_case',$project_id) == true and
+            strstr(PAGE,"ExternalModules/manager/project.php?pid=") and
+            strlen(strstr(PAGE,"ExternalModules/manager/project.php?pid=")) > 0)
+        {
+            $script = <<<SCRIPT
+<script type="text/javascript">
+
+ document.addEventListener("DOMNodeInserted", function(event){
+    var element = event.target;
+    if (element.tagName == 'TR') {
+        if (typeof element.attributes.field.nodeValue !== 'undefined'){
+            if (element.attributes.field.nodeValue == "description_cron") {
+                $(".external-modules-input-td input[type='radio'][name='paper_trail_type'][value='ppt_1']").hide();
+                $(".external-modules-input-td input[type='radio'][name='paper_trail_type'][value='ppt_1'] ").next().hide();
+            }
+        }
+    }
+});
+            </script>
+SCRIPT;
+//                    Adding only action tags to the Action Tag Description Window
+            print $script;
+        }
     }
 
   /**

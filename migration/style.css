@@ -1,0 +1,167 @@
+/* Background*/
+html {
+    height:100%;
+}
+
+body {
+    margin:0;
+}
+
+.bg {
+    animation:slide 3s ease-in-out infinite alternate;
+    background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);
+    bottom:0;
+    left:-50%;
+    opacity:.5;
+    position:fixed;
+    right:-50%;
+    top:0;
+    z-index:-1;
+}
+
+.bg2 {
+    animation-direction:alternate-reverse;
+    animation-duration:4s;
+}
+
+.bg3 {
+    animation-duration:5s;
+}
+
+.content {
+    background-color:rgba(255,255,255,.8);
+    border-radius:.25em;
+    box-shadow:0 0 .25em rgba(0,0,0,.25);
+    box-sizing:border-box;
+    left:50%;
+    padding:10vmin;
+    position:fixed;
+    text-align:center;
+    top:50%;
+    transform:translate(-50%, -50%);
+}
+
+h1 {
+    font-family:monospace;
+}
+
+@keyframes slide {
+    0% {
+        transform:translateX(-25%);
+    }
+    100% {
+        transform:translateX(25%);
+    }
+}
+
+
+/* Notification */
+
+.nothing2do {
+    position: fixed;
+    top: 50%;
+    left: 35%;
+    margin: -50px 0px 0px -50px;
+    border-radius: 25px;
+    border: 2px solid #0a709e;
+    background-color: #FFFFFF;
+    text-decoration-color: #1d2124;
+    font-size: xx-large;
+}
+
+/* Loaders */
+
+.loading-gif {
+    position: fixed;
+    content: url('?prefix=paper_trail&page=migration/spinner.gif');
+    top: 50%;
+    left: 50%;
+    margin: -50px 0px 0px -50px;
+}
+
+/* Footer*/
+.footer {
+    /*position: fixed;*/
+    padding: 10px;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #1ABC9C;
+    color: #000000;
+    text-align: center;
+}
+
+
+/* Header*/
+.h2 {
+    padding: 0px;
+    text-align: center;
+    background: #1abc9c;
+    color: #000000;
+    font-size: 20px;
+}
+
+p {
+    text-align: center;
+}
+
+
+/*Pills*/
+
+.greenPill {
+    background-color: #b6ff6d;
+    border: none;
+    color: #184e9d;
+    /*padding: 10px 20px;*/
+    text-align: center;
+    text-decoration: none;
+    /*display: inline-block;*/
+    margin: 4px 2px;
+    /*cursor: pointer;*/
+    border-radius: 16px;
+}
+
+.yellowPill {
+    background-color: #fcff71;
+    border: none;
+    color: #184e9d;
+    /*padding: 10px 20px;*/
+    text-align: center;
+    text-decoration: none;
+    /*display: inline-block;*/
+    margin: 4px 2px;
+    /*cursor: pointer;*/
+    border-radius: 16px;
+}
+
+
+
+/* pp styling */
+.pp table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.pp td {
+    border: 1px solid #ffffff;
+    text-align: center;
+    padding: 8px;
+}
+
+.pp th {
+    border: 1px solid #ffffff;
+    text-align: left;
+    padding: 8px;
+    background-color: #00356a;
+    text-align: center;
+    color: #fafbfd;
+}
+
+.pp tr:nth-child(even) {
+    background-color: #dce9ef;
+}
+
+.pp tr:nth-child(odd) {
+    background-color: #ffffff;
+}
