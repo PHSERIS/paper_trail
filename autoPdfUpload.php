@@ -6,7 +6,6 @@ use \REDCap as REDCap;
 use \Files as Files;
 include_once dirname(__FILE__)."/classes/common.php";
 
-
 class autoPdfUpload extends \ExternalModules\AbstractExternalModule
 {
     function redcap_save_record($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance)
@@ -28,7 +27,7 @@ class autoPdfUpload extends \ExternalModules\AbstractExternalModule
             strstr(PAGE,"ExternalModules/manager/project.php?pid=") and
             strlen(strstr(PAGE,"ExternalModules/manager/project.php?pid=")) > 0)
         {
-            $script = <<<SCRIPT
+            $script_longitudinal = <<<SCRIPT
 <script type="text/javascript">
 
  document.addEventListener("DOMNodeInserted", function(event){
@@ -44,9 +43,43 @@ class autoPdfUpload extends \ExternalModules\AbstractExternalModule
 });
             </script>
 SCRIPT;
-//                    Adding only action tags to the Action Tag Description Window
+
+            $script_non_longitudinal = <<<SCRIPT
+<script type="text/javascript">
+
+ document.addEventListener("DOMNodeInserted", function(event){
+    var element = event.target;
+    if (element.tagName == 'TR') {
+        if (typeof element.attributes.field.nodeValue !== 'undefined'){
+            if (element.attributes.field.nodeValue == "multi_hide_css") {
+                $(".external-modules-input-td input[type='radio'][name='paper_trail_type'][value='ppt_1']").hide();
+                $(".external-modules-input-td input[type='radio'][name='paper_trail_type'][value='ppt_1'] ").next().hide();
+                $('table').find('tr[field="multi_event_name"]').toggle();
+            }
+        }
+    }
+});
+            </script>
+SCRIPT;
+
+            global $Proj;
+            $script = $Proj->longitudinal == TRUE ? $script_longitudinal : $script_non_longitudinal;
+
             print $script;
         }
+
+//        print "<pre>";
+//        print "longitudinal:????";
+//        var_dump($Proj->longitudinal);
+////        var_dump($Proj);
+//        var_dump(REDCap::getEventIdFromUniqueEvent('research_data_arm_1'));
+//        print "123";
+//        $target_field123 = self::getProjectSetting('multi_event_name');
+//        var_dump($target_field123);
+//
+//        $target_form_test = $Proj->longitudinal == TRUE ? '64840' : $Proj->metadata[$target_field]['form_name'];
+//        var_dump($target_form_test);
+//        print "</pre>";
     }
 
   /**
