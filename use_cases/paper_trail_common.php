@@ -289,11 +289,6 @@ function generate_and_upload_pdf ( $project_id, $record, $pdf_these_forms, $targ
         false // remove locked fields
       );
 
-//        $fileLocation =  APP_PATH_TEMP . "/PaperTrailEvent.txt";
-//        $now = date('m.d.y h:i:s A');
-//        $logThis = "[$now] >>> ". var_export($response). " \n";
-//        file_put_contents($fileLocation, $logThis,FILE_APPEND | LOCK_EX);
-
       // Check to see if we need to archive this thing too
       if ( $uplaod_to_pdf_archive && $survey_id > 0) {
         /**

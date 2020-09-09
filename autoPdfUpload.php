@@ -49,15 +49,16 @@ SCRIPT;
 
  document.addEventListener("DOMNodeInserted", function(event){
     var element = event.target;
-    if (element.tagName == 'TR') {
-        if (typeof element.attributes.field.nodeValue !== 'undefined'){
-            if (element.attributes.field.nodeValue == "multi_hide_css") {
+    if (element.tagName == 'TR') {       
+         if (typeof element.attributes.field !== 'undefined'){             
+          if(element.getAttribute("field") == "multi_uc_instance"){                
                 $(".external-modules-input-td input[type='radio'][name='paper_trail_type'][value='ppt_1']").hide();
                 $(".external-modules-input-td input[type='radio'][name='paper_trail_type'][value='ppt_1'] ").next().hide();
-                $('table').find('tr[field="multi_event_name"]').toggle();
-            }
-        }
+                $('table').find('tr[field="multi_event_name"]').dialog({ autoOpen: false });
+                }
+         }
     }
+    
 });
             </script>
 SCRIPT;
@@ -67,19 +68,6 @@ SCRIPT;
 
             print $script;
         }
-
-//        print "<pre>";
-//        print "longitudinal:????";
-//        var_dump($Proj->longitudinal);
-////        var_dump($Proj);
-//        var_dump(REDCap::getEventIdFromUniqueEvent('research_data_arm_1'));
-//        print "123";
-//        $target_field123 = self::getProjectSetting('multi_event_name');
-//        var_dump($target_field123);
-//
-//        $target_form_test = $Proj->longitudinal == TRUE ? '64840' : $Proj->metadata[$target_field]['form_name'];
-//        var_dump($target_form_test);
-//        print "</pre>";
     }
 
   /**

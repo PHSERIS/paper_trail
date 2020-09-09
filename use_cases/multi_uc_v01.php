@@ -66,18 +66,10 @@ if ( !in_array($form_status, $allowed_form_status) )
 
 $pk = $Proj->table_pk;
 
-//$target_form = $Proj->metadata[$target_field]['form_name'];
 // Adding Event selection for target field
 $target_form_id = $Proj->longitudinal == TRUE ? $multi_event_name : $Proj->metadata[$target_field]['form_name'];
 $target_form = $Proj->metadata[$target_field]['form_name'];
 
-
-//$fileLocation =  APP_PATH_TEMP . "/PaperTrailEvent.txt";
-//$now = date('m.d.y h:i:s A');
-//$logThis = "[$now] >>> ID: $target_form_id \n";
-//$logThis .= "[$now] >>> Form: $target_form \n";
-//file_put_contents($fileLocation, $logThis,FILE_APPEND | LOCK_EX);
-//$enable_survey_archive = $this->getProjectSetting('enable_survey_archive');
 $enable_survey_archive = $multi_enable_survey_archive;
 
 $survey_id = -1;
@@ -98,7 +90,6 @@ if ( $enable_survey_archive ) {
 switch ($upload_type) {
     case 'C1':
 
-//        $not_null_fields = $this->getProjectSetting('not_null_fields');
         $not_null_fields = $multi_not_null_fields;
         // Check to see if the PDF generating condition is true
         if ( PAGE == 'surveys/index.php' ){
@@ -121,7 +112,7 @@ switch ($upload_type) {
         break;
 
     case 'C2':
-//        $trigger_field = $this->getProjectSetting('trigger_field');
+
         $trigger_field = $multi_trigger_field;
         // Check to see if the PDF generating condition is true
         if ( PAGE == 'surveys/index.php' ){
