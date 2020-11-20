@@ -26,6 +26,8 @@ if ($paper_trail_type == 'ppt_2') {
         $multi_enable_cron = $this->getProjectSetting('multi_enable_cron')[$k];                         // Done
         $multi_pdf_form = $this->getProjectSetting('multi_pdf_form')[$k];                               // Done
         $multi_target_field = $this->getProjectSetting('multi_target_field')[$k];                       // Done
+        $multi_event_name = $this::getProjectSetting('multi_event_name')[$k];                           // Done
+        $multi_current_or_all = $this::getProjectSetting('multi_current_or_all')[$k];                      // Done
         $multi_complete_stat = $this->getProjectSetting('multi_complete_stat')[$k];                     // Done
         $multi_file_prefix = $this->getProjectSetting('multi_file_prefix')[$k];                         // Done
         $multi_enable_survey_archive = $this->getProjectSetting('multi_enable_survey_archive')[$k];     // Done
@@ -33,8 +35,28 @@ if ($paper_trail_type == 'ppt_2') {
         $multi_not_null_fields = $this->getProjectSetting('multi_not_null_fields')[$k];                 // Done
         $multi_trigger_field = $this->getProjectSetting('multi_trigger_field')[$k];                     // Done
         $multi_hide_css = $this->getProjectSetting('multi_hide_css')[$k];
-        $main_ulr = __DIR__ . '/use_cases/multi_uc_v01.php';
-        if (!@include($main_ulr)) ;
+
+        switch ($multi_current_or_all) {
+            case 1: // run only on this event
+                if($event_id == $multi_event_name){
+                    $main_ulr = __DIR__ . '/use_cases/multi_uc_v01.php';
+                    if (!@include($main_ulr)) ;
+                }
+                break;
+            case 2: // run on the current event
+                $multi_event_name = $event_id;
+                $main_ulr = __DIR__ . '/use_cases/multi_uc_v01.php';
+                if (!@include($main_ulr)) ;
+                break;
+            default: // run on all events - distributing pdf
+                $main_ulr = __DIR__ . '/use_cases/multi_uc_v01.php';
+                if (!@include($main_ulr)) ;
+                break;
+        }
+//
+//
+//        $main_ulr = __DIR__ . '/use_cases/multi_uc_v01.php';
+//        if (!@include($main_ulr)) ;
     }
 }
 

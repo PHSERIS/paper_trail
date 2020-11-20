@@ -288,6 +288,40 @@
 					"type": "field-list"
 				},
 				{
+					"key": "multi_current_or_all",
+					"name": "<b>Run this use-case</b><br>a. \"on current event\" will be triggered in when completing every event, but the PDF will be saved to the current event <br>b.\"on all events\" will be triggered on all events, but pdf will be distributed to the designated event (below) regardless of what event is being completed (use this options for resetting back to non-longitudinal project.) <br> c.\"only on this event\" is only triggered when completing the specified event (below). ",
+					"required": true,
+					"allow-project-overrides": false,
+					"type": "radio",
+					"choices": [
+						{ "value": "2", "name": "on current event" },
+						{ "value": "0", "name": "on all events" },
+						{ "value": "1", "name": "only on this event" }
+					]
+				},
+				{
+					"key": "multi_event_name",
+					"name": "<b>Select Target field's Event Name</b> <br><i>leave this blank if your project is not longitudinal</i></br>",
+					"required": false,
+					"allow-project-overrides": false,
+					"type": "event-list",
+					"branchingLogic": {
+						"type": "or",
+						"conditions": [
+							{
+								"field": "multi_current_or_all",
+								"op": "=",
+								"value": "0"
+							},
+							{
+								"field": "multi_current_or_all",
+								"op": "=",
+								"value": "1"
+							}
+						]
+					}
+				},
+				{
 					"key": "multi_complete_stat",
 					"name": "<b>Set the target form status to</b>",
 					"required": true,

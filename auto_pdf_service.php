@@ -150,8 +150,14 @@ if ($paper_trail_type == 'ppt_2') {
 //    $pdf_archival = $module->getProjectSetting('enable_survey_archive');
     $pdf_archival = $module->getProjectSetting('multi_enable_survey_archive')[$k];
 
+//    $target_form_id = $Proj->longitudinal == TRUE ? $module->getProjectSetting('multi_event_name')[$k] : $Proj->metadata[$target_field]['form_name'];
+    if($module->getProjectSetting('multi_current_or_all')[$k] == 2){
+        $target_form_id = $Proj->longitudinal == TRUE ? $event_id : $Proj->metadata[$target_field]['form_name'];
+    } else {
+        $target_form_id = $Proj->longitudinal == TRUE ? $module->getProjectSetting('multi_event_name')[$k] : $Proj->metadata[$target_field]['form_name'];
+    }
     // We should have everything we need at this point
-    generate_and_upload_pdf ( $Proj->project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $form_status, "SYSTEM", $pdf_archival, $survey_id );
+    generate_and_upload_pdf ( $Proj->project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $form_status, "SYSTEM", $pdf_archival, $survey_id, $target_form_id );
 
     return; // We're done
 }
