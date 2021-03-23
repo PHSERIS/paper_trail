@@ -65,11 +65,9 @@ if ( !in_array($form_status, $allowed_form_status) )
     $form_status = "0";
 
 $pk = $Proj->table_pk;
-
-// Adding Event selection for target field
-$target_form_id = $Proj->longitudinal == TRUE ? $multi_event_name : $Proj->metadata[$target_field]['form_name'];
 $target_form = $Proj->metadata[$target_field]['form_name'];
 
+//$enable_survey_archive = $this->getProjectSetting('enable_survey_archive');
 $enable_survey_archive = $multi_enable_survey_archive;
 
 $survey_id = -1;
@@ -90,6 +88,7 @@ if ( $enable_survey_archive ) {
 switch ($upload_type) {
     case 'C1':
 
+//        $not_null_fields = $this->getProjectSetting('not_null_fields');
         $not_null_fields = $multi_not_null_fields;
         // Check to see if the PDF generating condition is true
         if ( PAGE == 'surveys/index.php' ){
@@ -105,14 +104,14 @@ switch ($upload_type) {
         $ok_to_generate = check_triggering_condition( $Proj, $record, $event_id, $repeat_instance, $not_null_fields, $upload_type );
 
         if ( $ok_to_generate ) {
-            trigger_pdf_generation($server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive,$k_index,$target_form_id);
+            trigger_pdf_generation($server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive,$k_index);
 
         }
 
         break;
 
     case 'C2':
-
+//        $trigger_field = $this->getProjectSetting('trigger_field');
         $trigger_field = $multi_trigger_field;
         // Check to see if the PDF generating condition is true
         if ( PAGE == 'surveys/index.php' ){
@@ -127,7 +126,7 @@ switch ($upload_type) {
         // Check to see if the PDF generating condition is true
         $ok_to_generate = check_triggering_condition( $Proj, $record, $event_id, $repeat_instance, $trigger_field, $upload_type );
         if ( $ok_to_generate ) {
-            trigger_pdf_generation($server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive,$k_index,$target_form_id);
+            trigger_pdf_generation($server_side_processing, $project_id, $record, $pdf_these_forms, $target_field, $event_id, $target_form, $pk, $repeat_instance, $file_prefix, $url, $form_status, $survey_id, $enable_survey_archive,$k_index);
         }
         break;
 
